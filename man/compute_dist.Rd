@@ -1,0 +1,23 @@
+\name{compute_dist}
+\alias{compute_dist}
+\title{Compute distance between points on the globe}
+\usage{
+compute_dist(lon, lat, lon0, lat0, Rearth = 6371)
+}
+\arguments{
+  \item{lon,lat}{points from which distance is measured (in
+  degree)}
+
+  \item{lon0,lat0}{points to which distance is measured (in
+  degree)}
+
+  \item{Rearth}{Earth's radius (defaults to 6371km)}
+}
+\value{
+Distance between points in km
+}
+\description{
+Compute distance between points on the globe
+}
+\keyword{utilities}
+

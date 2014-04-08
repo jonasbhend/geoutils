@@ -1,0 +1,56 @@
+\name{readAndMergeCMIP5}
+\alias{readAndMergeCMIP5}
+\title{Read in a collate a collection of NetCDF files.}
+\usage{
+readAndMergeCMIP5(files, complete_ens = FALSE, complete_ts = TRUE,
+  mulc = 1, addc = 0, valid_range = c(-1e+10, 1e+10), validate = TRUE,
+  experiments = c("historical", "rcp26", "rcp45", "rcp60", "rcp85"),
+  verbose = TRUE, startyear = 1900, endyear = 2099, seas = c("djf",
+  "mam", "jja", "son"), min.ncol = length(seas), varname = NULL,
+  mask = NULL)
+}
+\arguments{
+  \item{files}{vector of pathnames to NetCDF files (old
+  directory structure)}
+
+  \item{complete_ens}{logical, should models and runs be
+  the same across RCPs?}
+
+  \item{complete_ts}{logical, should time series be
+  complete?}
+
+  \item{mulc}{multiplicative factor (see
+  \code{\link{readNetCDF}})}
+
+  \item{addc}{additive factor}
+
+  \item{valid_range}{range for quality control}
+
+  \item{validate}{logical, should quality control be
+  perfomed (on a per model basis)?}
+
+  \item{experiments}{what experiment should be retained?}
+
+  \item{verbose}{logical, should progres notes be printed
+  to screen?}
+
+  \item{startyear,endyear}{what years should time series be
+  clipped to?}
+
+  \item{seas}{what seasons should be read in (see
+  \code{\link{readSeasNetCDF}})}
+
+  \item{min.ncol}{No idea (at time of writing)}
+
+  \item{varname}{variable name (see
+  \code{\link{readNetCDF}})}
+
+  \item{mask}{logical, index of grid boxes to retain (see
+  \code{\link{readNetCDF}})}
+}
+\description{
+This function reads in data in CMIP5-like format and merges
+the corresponding 'historical' and 'rcp' runs.
+}
+\keyword{utilities}
+

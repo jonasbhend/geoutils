@@ -1,0 +1,29 @@
+\name{ncdf_times}
+\alias{ncdf_times}
+\title{Get time attribute from NetCDF file and convert it to years (or Rdate)}
+\usage{
+ncdf_times(nc, timename = NULL, as.Rdate = TRUE, force = TRUE,
+  tz = "CET")
+}
+\arguments{
+  \item{nc}{object with link to NetCDF file (from
+  \code{\link{open.ncdf}})}
+
+  \item{timename}{dimension name with time (optional)}
+
+  \item{as.Rdate}{logical, should output be converted to
+  Rdate?}
+
+  \item{force}{logical, force Rdate conversion for monthly
+  times?}
+
+  \item{tz}{time zone for time zone support (experimental)}
+}
+\description{
+This function reads the NetCDF time attribute and converts
+it to years with decimal fraction for monthly data. For
+sub-monthly data the conversion is to the Rdate format
+(only works with standard calendar!).
+}
+\keyword{utilities}
+

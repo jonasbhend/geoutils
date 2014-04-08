@@ -1,8 +1,12 @@
 Package: geoutils
-Title: 
-Description: 
+Title: package to read in and analyse climate model output in NetCDF format
+Description: This package supplies utility functions to read in NetCDF data
+    following CF conventions. Also, it is a loose collection of utitility
+    functions used to analyse and manipulate climate data.
 Version: 0.1
 Authors@R: 'Jonas Bhend <jonas.bhend@gmx.ch> [aut, cre]'
-Depends: R (>= 3.0.2)
+Depends:
+    R (>= 3.0.2),
+    ncdf
 License: GPL-3
 LazyData: true

@@ -1,0 +1,23 @@
+\name{collapse2mat}
+\alias{collapse2mat}
+\title{Converts array to matrix}
+\usage{
+collapse2mat(x, first = FALSE)
+}
+\arguments{
+  \item{x}{array with at more than two dimensions}
+
+  \item{first}{logical, should first or last dimension be
+  retained?}
+}
+\description{
+Function to convert an array with at least 2 dimensions to
+a matrix. Either the first dimension (as rows) or the last
+(as columns) will be retained.
+}
+\examples{
+## should be 3, 20
+dim(collapse2mat(array(NA, c(3,5,4)), first=TRUE))
+}
+\keyword{utilities}
+

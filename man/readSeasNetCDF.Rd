@@ -1,0 +1,36 @@
+\name{readSeasNetCDF}
+\alias{readSeasNetCDF}
+\title{Read in NetCDF data with NCI seasonal structure (one variable per season)
+and collate to continuous seasonal time series}
+\usage{
+readSeasNetCDF(filename, varname = NULL, seas = c("djf", "mam", "jja",
+  "son"), mask = NULL, mulc = 1)
+}
+\arguments{
+  \item{filename}{path to input NetCDF file}
+
+  \item{varname}{variable name to read in (one at a time)}
+
+  \item{seas}{string with season names to be read in (see
+  details)}
+
+  \item{mask}{vector (logical) with lon-lat indices to be
+  read in}
+
+  \item{mulc}{Multiplicative factor to be multiplied with
+  NetCDF data (see details)}
+}
+\description{
+This function is a wrapper for the \code{\link{readNetCDF}}
+function to read in data in the NCI seasonal format and
+convert it to the a continous time series.
+}
+\details{
+The variable names are collated from the \code{varname} and
+the season names (e.g. tas_djf). Please note that the
+sequence of seasons is unrestricted, and a time series with
+for example annual, summer and winter values can be
+generated.
+}
+\keyword{utilities}
+

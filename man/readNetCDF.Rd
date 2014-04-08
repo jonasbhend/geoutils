@@ -1,0 +1,33 @@
+\name{readNetCDF}
+\alias{readNetCDF}
+\title{Read in NetCDF data}
+\usage{
+readNetCDF(filename, varname = NULL, mask = NULL, mulc = 1)
+}
+\arguments{
+  \item{filename}{path to input NetCDF file}
+
+  \item{varname}{variable name to read in (one at a time)}
+
+  \item{mask}{vector (logical) with lon-lat indices to be
+  read in}
+
+  \item{mulc}{Multiplicative factor to be multiplied with
+  NetCDF data (see details)}
+}
+\description{
+This function reads in NetCDF data and stores it in an
+object with class 'NetCDF'
+}
+\details{
+The multiplicative factor can be of length 1 or any subset
+of the time dimension of the input data so that seasonal
+data can be converted from units per month to units per
+season with different multiplicative constants per season.
+}
+\examples{
+tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+names(attributes(tas))
+}
+\keyword{utilities}
+

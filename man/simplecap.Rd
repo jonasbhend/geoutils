@@ -1,0 +1,16 @@
+\name{simplecap}
+\alias{simplecap}
+\title{Functions to modify text.}
+\usage{
+simplecap(x)
+}
+\arguments{
+  \item{x}{text}
+}
+\description{
+These functions modify text to capitalise the first letter
+of each word (\code{simplecap}) or the very first letter
+(\code{firstcap}).
+}
+\keyword{manip}
+
