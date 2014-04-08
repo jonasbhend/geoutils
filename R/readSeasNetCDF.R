@@ -89,7 +89,7 @@ readSeasNetCDF <- function(filename, varname=NULL, seas=c('djf', 'mam', 'jja', '
     attributes(out) <- c(attributes(out), attributes(interim[[1]])[! names(attributes(interim[[1]])) %in% c('dim', 'dimnames')])
     if (!is.null(rownames(interim[[1]]))) rownames(out) <- rownames(interim[[1]])
     attr(out, 'time') <- sort(as.vector(sapply(interim, attr, 'time'))) + (seq(seas) - 1)/length(seas)
-    if (length(attr(out, 'time')) != ncol(out)) warning(paste('Time dimension messed up in', models[mi], runi))
+    if (length(attr(out, 'time')) != ncol(out)) warning(paste('Time dimension messed up'))
   }
   return(out)
 }
