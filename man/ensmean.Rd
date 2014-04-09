@@ -1,0 +1,28 @@
+\name{ensmean}
+\alias{ensmean}
+\title{Compute (multi-model) ensemble means}
+\usage{
+ensmean(x, multimodel = FALSE)
+}
+\arguments{
+  \item{x}{input array of class 'NetCDF'}
+
+  \item{multimodel}{logical, should first dimension
+  (models) be averaged?}
+}
+\description{
+This function computes the (unweighted) ensemble mean for
+an initial condition ensemble or a multi-model ensemble on
+the assumption that the input of class \code{NetCDF} is a
+3d or 4d array with the first dimension reflective of
+models and the second dimension containing runs (in the 4d
+case).
+}
+\examples{
+xtmp <- array(1:5, c(5,3,1,1))
+class(xtmp) <- 'NetCDF'
+ensmean(xtmp)[,1,1]
+ensmean(ensmean(xtmp), multimodel=TRUE)[,1]
+}
+\keyword{utilities}
+
