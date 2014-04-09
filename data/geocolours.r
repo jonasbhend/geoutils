@@ -1,5 +1,3 @@
-.soil   <- c("#E6FAFF","white", "grey", gbfun(6)[c(3:1,4:6)], .water)
-
 .data <- t(array(c(
   0, 0, 0,
   2, 31, 64,
@@ -54,6 +52,5 @@
 .redwhite   <- .data[17:9,]
 .greenwhite <- .data[17:9,c(2,1,3)]
 .brownwhite <- .data[1:9,c(3,2,1)]
-.water        <- "#ABE1FA"
 
 rm(.data)

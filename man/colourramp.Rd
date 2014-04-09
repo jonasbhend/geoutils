@@ -1,23 +1,24 @@
-\name{colfun}
+\name{colourramp}
 \alias{.colseq}
 \alias{.getval}
-\alias{bbfun}
-\alias{colfun}
-\alias{gbfun}
-\alias{rbfun}
+\alias{colourramp}
 \title{Colour palettes}
 \usage{
+colourramp(n, ramp = "redblue", start = 0.4, log = F)
+
 .getval(ind, val, predind, smooth)
 
 .colseq(x, tmp, start = 0, stop = 1, log = F, smooth = 0.4)
-
-rbfun(n, start = 0.4, log = F)
-
-gbfun(n, start = 0.4, log = F)
-
-bbfun(n, start = 0.4, log = F)
 }
 \arguments{
+  \item{n}{number of colour values to be returned}
+
+  \item{ramp}{text specifying what ramp to use}
+
+  \item{start}{darkness for darkest colour (0 is black)}
+
+  \item{log}{logical, should interval be divided linearly?}
+
   \item{ind}{An index specifying the spacing of the values
   (0 - 1)}
 
@@ -35,13 +36,8 @@ bbfun(n, start = 0.4, log = F)
   \item{tmp}{Array of rgb values (dim=c(ncolors,3)) along
   which the color sequence is interpolated}
 
-  \item{start,stop}{the range for which colours should be
-  interpolated (0 - 1)}
-
-  \item{log}{logical, should interval between \code{start}
-  and \code{stop} be divided linearly?}
-
-  \item{n}{number of colours to return}
+  \item{stop}{the upper bound for brightness of colours (1
+  is white)}
 }
 \description{
 Functions to help set up colour palettes for use in plots.

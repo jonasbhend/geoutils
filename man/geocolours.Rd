@@ -6,8 +6,6 @@
 \alias{.greenwhite}
 \alias{.hsurf}
 \alias{.redwhite}
-\alias{.soil}
-\alias{.water}
 \alias{geocolours}
 \title{Colours used in the geoutils package}
 \format{matrices with RGB colour values (hex colours for \code{.soil}
