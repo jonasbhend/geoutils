@@ -1,9 +1,5 @@
 #' @name colfun
-#' @aliases .getval
-#' @aliases .colseq
-#' @aliases rbfun
-#' @aliases gbfun
-#' @aliases bbfun
+#' @aliases .getval .colseq rbfun gbfun bbfun
 #' 
 #' @title Colour palettes
 #' 
@@ -115,62 +111,15 @@ bbfun <- function(n, start=0.4, log=F){
     colour
 }
 
-.soil   <- c("#E6FAFF","white", "grey", gbfun(6)[c(3:1,4:6)], .water)
-
-.data <- t(array(c(
-  0, 0, 0,
-  2, 31, 64,
-  5, 48, 97,
-  23, 62, 132,
-  33, 102, 172,
-  67, 147, 195,
-  146, 197, 222,
-  209, 229, 240,
-  253, 253, 253,
-  253, 219, 199,
-  244, 165, 130,
-  214, 96, 77,
-  178, 24, 43,
-  138, 14, 33,
-  103, 0, 31,
-  68, 0, 28,
-  0, 0, 0),
-  dim=c(3,17)))/255
-
-.hsurf  <- t(array(c(
-  60,  179,  113,
-  157,  210,  156,
-  207,  229,  174,
-  242,  244,  193,
-  230,  226,  148,
-  216,  211,  114,
-  165,  152,   72,
-  121,   79,   31,
-  81,   63,   22),
-  dim=c(3,9)))/255
-
-.gpcc   <- t(array(c(
-  255, 252, 127,
-  255, 250, 0,
-  132, 250, 127,
-  22, 247, 0,
-  18, 194, 0,
-  15, 165, 0,
-  14, 162, 255,
-  9, 109, 255,
-  0, 39, 255,
-  139, 50, 222,
-  159, 31, 161,
-  189, 37, 191,
-  218, 43, 221,
-  253, 0, 255),
-  dim=c(3,14)))/255
-
-# define the standard colour bars
-.bluewhite  <- .data[1:9,]
-.redwhite   <- .data[17:9,]
-.greenwhite <- .data[17:9,c(2,1,3)]
-.brownwhite <- .data[1:9,c(3,2,1)]
-.water        <- "#ABE1FA"
-
-rm(.data)
+#' Colours used in the geoutils package
+#' 
+#' Provides a few (hidden) colour sequences for use with colfun
+#' 
+#' @docType data
+#' @keywords datasets
+#' @format matrices with RGB colour values (hex colours for \code{.soil}
+#'         and \code{.water})
+#' @aliases .soil .water .hsurf .gpcc .redwhite .bluewhite .brownwhite
+#'          .greenwhite
+#' @name geocolours
+NULL
