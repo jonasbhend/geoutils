@@ -57,12 +57,14 @@ time_average <- function(x, n, offset=NULL, type='start'){
     
     dim.new <- dims
     dim.new[length(dims)] <- nblocks*nseas
-    
-    if (length(dim.new) == 1){
+    if (dims[length(dims)] == 1){
+      warning('Only one time step in input - assuming input is average')
+      out <- x
+    } else if (length(dim.new) == 1){
       dim.int <- c(1,nseas,floor(dims[length(dims)]/nseas))
       dim.int2<- c(1,nseas, n, nblocks)
       tmp     <- array(x, dim.int)
-      out <- array(apply(array(tmp[,,offset+1:(n*nblocks)], dim.int2), c(1,2,4), mean, na.rm=T), dim.new)       
+      out <- array(apply(array(tmp[,,offset+1:(n*nblocks)], dim.int2), c(1,2,4), mean, na.rm=T), dim.new)               
     } else {
       dim.int <- c(prod(dims[1:(length(dims)-1)]), nseas, floor(dims[length(dims)]/nseas))
       dim.int2 <- c(prod(dims[1:(length(dims)-1)]), nseas, n, nblocks)
@@ -88,9 +90,13 @@ time_average <- function(x, n, offset=NULL, type='start'){
       attr(out, atn) <- attr(x, atn)
     }
     # convert the time accordingly
-    timtmp <- tim[offset*nseas + 1:(n*nblocks*nseas)]
-    tim.new <- ceiling(as.vector(apply(array(floor(timtmp), c(nseas, n, nblocks)), c(1,3), mean))) + timtmp[1:nseas] %% 1
-    attr(out, "time") <- tim.new
+    if (dims[length(dims)] == 1){
+      attr(out, 'time') <- attr(x, 'time')
+    } else {
+      timtmp <- tim[offset*nseas + 1:(n*nblocks*nseas)]
+      tim.new <- ceiling(as.vector(apply(array(floor(timtmp), c(nseas, n, nblocks)), c(1,3), mean))) + timtmp[1:nseas] %% 1
+      attr(out, "time") <- tim.new      
+    }
   } else {
     out <- x
   }
