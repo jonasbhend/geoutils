@@ -7,6 +7,7 @@
 #' 
 #' @param x input array of class 'NetCDF'
 #' @param multimodel logical, should first dimension (models) be averaged?
+#' @param na.rm logical, should missing values be removed (only for multi)
 #' 
 #' @keywords utilities
 #' @examples
@@ -16,7 +17,7 @@
 #' ensmean(ensmean(xtmp), multimodel=TRUE)[,1]
 #' @export
 #' 
-ensmean <- function(x, multimodel=FALSE){
+ensmean <- function(x, multimodel=FALSE, na.rm=F){
   if (is.list(x)){
     out <- lapply(x, function(y) {
       ny <- nrow(y)
@@ -33,7 +34,7 @@ ensmean <- function(x, multimodel=FALSE){
       }})
   } else {
     if (multimodel){
-      out <- apply(x, 2:length(dim(x)), mean)
+      out <- apply(x, 2:length(dim(x)), mean, na.rm=na.rm)
       if (length(dim(x)) == 2) out <- t(out)
     } else {
       out <- apply(x, setdiff(seq(1,length(dim(x))), 2), mean, na.rm=T)
