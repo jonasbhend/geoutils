@@ -20,6 +20,7 @@
 #' @param lwd line width for line plots
 #' @param nlevs number of contour interval (input to \code{pretty})
 #' @param colramp colour ramp to be used with colourramp function (default)
+#' @param seas logical, should seasons be plotted individually?
 #' 
 #' @keywords plot
 #' @examples
@@ -31,7 +32,7 @@
 #' plot(x, type='trend', pt.cex=3)
 #' 
 #' @export
-plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time' %in% names(attributes(x))) seq(along=attr(x, 'time')) else 1, si=1, levs=NULL, col=NULL, pt.cex=2, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', ...){
+plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time' %in% names(attributes(x))) seq(along=attr(x, 'time')) else 1, si=1, levs=NULL, col=NULL, pt.cex=2, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', seas=F, ...){
   if (type == 'ts'){
     xtmp <- select_region(x, si)
     tim <- if ('time' %in% names(attributes(x))) attr(x, 'time') else 1:ncol(x)
@@ -44,10 +45,16 @@ plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time
       cols <- rep(col, length=nrow(xtmp)*nseas)
     }
     if (!add) plot(tim, xtmp[1,], type='n', xlab=xlab, ylab=ylab, xlim=xlim, ylim=if (is.null(ylim)) range(xtmp, na.rm=T) else ylim, ...)
-    for (i in 1:nseas){
+    if (seas){
+      for (i in 1:nseas){
+        for (j in seq(along=si)){
+          ind <- seq(i,ntim,nseas)
+          lines(tim[ind], xtmp[j,ind], lwd=lwd, col=cols[i], lty=rep(lty, length=length(si))[j])        
+        }
+      }      
+    } else {
       for (j in seq(along=si)){
-        ind <- seq(i,ntim,nseas)
-        lines(tim[ind], xtmp[j,ind], lwd=lwd, col=cols[i], lty=rep(lty, length=length(si))[j])        
+        lines(tim, xtmp[j,], lwd=lwd, col=cols[1], lty=rep(lty, length=length(si))[j])
       }
     }
   } else {

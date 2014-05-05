@@ -2,13 +2,16 @@
 \alias{ensmean}
 \title{Compute (multi-model) ensemble means}
 \usage{
-ensmean(x, multimodel = FALSE)
+ensmean(x, multimodel = FALSE, na.rm = F)
 }
 \arguments{
   \item{x}{input array of class 'NetCDF'}
 
   \item{multimodel}{logical, should first dimension
   (models) be averaged?}
+
+  \item{na.rm}{logical, should missing values be removed
+  (only for multi)}
 }
 \description{
 This function computes the (unweighted) ensemble mean for

@@ -1,4 +1,5 @@
 S3method(open,ncdf)
+S3method(plot,NetCDF)
 export(.colseq)
 export(.getval)
 export(apply.NetCDF)

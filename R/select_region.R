@@ -3,11 +3,22 @@
 #' Function to select regions (2nd last dimension in NetCDF array).
 #' 
 #' @param x input array of class NetCDF
-#' @param regi index of region to select
+#' @param regi index or name of region to select
+#' 
+#' @details
+#' Named regions to select only work if the NetCDF object contains an attribute
+#' 'regions' that contains the region names referred to in \code{regi}.
 #' 
 #' @keywords utilities
 #' @export
 select_region <- function(x, regi=1){
+  if (is.character(regi)){
+    if (is.null(attr(x, 'regions'))){
+      stop('No attribute with region names')
+    } else {
+      regi <- match(regi, attr(x, 'regions'))    
+    } 
+  }
   ndim <- length(dim(x))
   xtmp <- collapse2mat(aperm(x, c(ndim - 1, setdiff(1:ndim, ndim-1))), first=TRUE)
   outdims <- dim(x)[-(ndim-1)]
@@ -32,7 +43,7 @@ select_region <- function(x, regi=1){
   }
   if (length(outdims) == 1){
     adimnames <- attr(x, 'dimnames')
-    adimnames[[length(adimnames) - 1]] <- adimnames[[length(adimnames) - 1]][regi]
+    if (!is.null(adimnames[[length(adimnames) - 1]])) adimnames[[length(adimnames) - 1]] <- adimnames[[length(adimnames) - 1]][regi]
   } else {
     adimnames <- attr(x, 'dimnames')[-2]
   }
