@@ -27,7 +27,9 @@ detect_break <- function(x, breaktime=2005, n=50, detrend=TRUE){
       if (any(!is.na(x))){
         xmn1 <- predict(lm(x[1:n] ~ seq(1,n)), interval='conf', level=pnorm(1))
         xmn2 <- predict(lm(x[n + 1:n] ~ seq(1,n)), interval='conf', level=pnorm(1))
-        out <- (xmn1[nrow(xmn1),1] - xmn2[1,1]) / sqrt((diff(xmn1[nrow(xmn1), 2:1])**2 + diff(xmn2[1,2:1])**2) / 2)
+        xsd <- sqrt((diff(xmn1[nrow(xmn1), 2:1])**2 + diff(xmn2[1,2:1])**2) / 2)
+        xsd[xsd == 0] <- 1
+        out <- (xmn1[nrow(xmn1),1] - xmn2[1,1]) / xsd
         return(out)        
       } else {
         return(NA)
