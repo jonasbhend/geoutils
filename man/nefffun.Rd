@@ -11,8 +11,10 @@ nefffun(N, acf)
   higher lags not implemented)}
 }
 \description{
-Compute effective degrees of freedom for autocorrelated
-time series
+Givne the number of records and the auto-correlation
+coefficients, this function computes the effective degrees
+of freedom of the time series after Storch and Zwiers
+(1999).
 }
 \keyword{utilities}
 

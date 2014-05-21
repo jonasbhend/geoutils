@@ -1,11 +1,17 @@
 \name{select_models}
 \alias{select_ensembles}
+\alias{select_ensmember}
+\alias{select_ensmember2}
 \alias{select_models}
 \title{Select models and ensemble members}
 \usage{
 select_models(x, modi = 1:nrow(x))
 
 select_ensembles(x, ensi = 1:ncol(x))
+
+select_ensmember(x, modi = 1:nrow(x))
+
+select_ensmember2(x, ensi = 1:ncol(x))
 }
 \arguments{
   \item{x}{object of class 'NetCDF'}
@@ -19,7 +25,9 @@ select_ensembles(x, ensi = 1:ncol(x))
 \description{
 Functions to select models \code{select_models} and
 ensemble members \code{select_ensembles} from an array of
-model results.
+model results. With the corresponding functions
+\code{select_ensmember} and \code{select_ensmember2} for
+backwards compatibility.
 }
 \keyword{utilities}
 

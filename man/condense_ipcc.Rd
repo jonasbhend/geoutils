@@ -1,0 +1,36 @@
+\name{condense_ipcc}
+\alias{condense_ipcc}
+\alias{condense_picntrl}
+\alias{implode}
+\title{condense a list of NetCDF objects into an array}
+\usage{
+condense_ipcc(x, year.range = c(1870, 2100), seed = 11, expand.ts = FALSE)
+
+condense_picntrl(x)
+
+implode(x, nfrac = 0.8, clean = FALSE)
+}
+\arguments{
+  \item{x}{list with objects of type NetCDF}
+
+  \item{year.range}{range of years for output data}
+
+  \item{seed}{random seed if missing values at end should
+  be infilled}
+
+  \item{expand.ts}{logical, should missing values at end be
+  infilled?}
+
+  \item{x}{list of objects of type NetCDF}
+
+  \item{clean}{logical, should resulting array be cleaned
+  up?}
+}
+\description{
+These functions condense and subset a list of NetCDF
+objects (each containing time series of one model, ensemble
+run) into an array with the first two dimensions being the
+model and runs respectively.
+}
+\keyword{utilities}
+

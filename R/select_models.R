@@ -1,12 +1,14 @@
 #' @name select_models
-#' @aliases select_ensembles
+#' @aliases select_ensembles select_ensmember select_ensmember2
 #' 
 #' @title
 #' Select models and ensemble members
 #' 
 #' @description 
 #' Functions to select models \code{select_models} and ensemble members
-#' \code{select_ensembles} from an array of model results.
+#' \code{select_ensembles} from an array of model results. With the corresponding
+#' functions \code{select_ensmember} and \code{select_ensmember2} for backwards
+#' compatibility.
 #' 
 #' @param x object of class 'NetCDF'
 #' @param modi indices of models to select (first dimension in x)
@@ -75,3 +77,10 @@ select_ensembles <- function(x, ensi=1:ncol(x)){
   }
   invisible(xout)
 }
+#' @rdname select_models
+#' @export
+select_ensmember <- select_models
+#' @rdname select_models
+#' @export
+select_ensmember2 <- select_ensembles
+

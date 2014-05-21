@@ -17,7 +17,8 @@ compute_dist(lon, lat, lon0, lat0, Rearth = 6371)
 Distance between points in km
 }
 \description{
-Compute distance between points on the globe
+This function computes distances between an arbitrary
+number of points on the globe
 }
 \keyword{utilities}
 

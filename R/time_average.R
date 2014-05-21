@@ -13,7 +13,7 @@
 #' \code{start} starts the \code{n}-year averages at the beginning
 #' of the time series, \code{end} sets the offset so that the last
 #' average ends in the last year of the time series, \code{even} 
-#' sets the offset so that \code{year %% n == 0} for the first year
+#' sets the offset so that \code{modulo(year, n) == 0} for the first year
 #' in the first average (i.e. for \code{n=5} averages such as 1910-1914)
 #' @keywords utilities
 #' @export

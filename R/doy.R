@@ -1,6 +1,9 @@
 #' Compute the day of the year from date
+#' 
+#' Given an .Rdate object, this function computes the day of the year (from 1-366)
 #'
 #' @param x Rdates to compute the day of the year
+#' 
 #' @keywords utilities
 #' @export
 doy <- function(x) {

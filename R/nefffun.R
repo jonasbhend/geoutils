@@ -1,5 +1,9 @@
 #' Compute effective degrees of freedom for autocorrelated time series
 #'
+#' Givne the number of records and the auto-correlation coefficients, this function
+#' computes the effective degrees of freedom of the time series after 
+#' Storch and Zwiers (1999).
+#'
 #' @param N number of elements in input
 #' @param acf autocorrelation coefficients (up to lag 2, higher lags not implemented)
 #' @keywords utilities

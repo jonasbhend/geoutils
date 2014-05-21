@@ -8,7 +8,8 @@ doy(x)
   \item{x}{Rdates to compute the day of the year}
 }
 \description{
-Compute the day of the year from date
+Given an .Rdate object, this function computes the day of
+the year (from 1-366)
 }
 \keyword{utilities}
 

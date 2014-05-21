@@ -1,0 +1,20 @@
+\name{dedrift}
+\alias{dedrift}
+\title{Function to remove drift from model runs}
+\usage{
+dedrift(data, ctl, varname = "pr")
+}
+\arguments{
+  \item{data}{(list of) input time series of type NetCDF}
+
+  \item{ctl}{(list of) control run time series of type
+  NetCDF}
+
+  \item{varname}{variable name (if data is no list)}
+}
+\description{
+Simple drift correction of model runs given a corresponding
+control run
+}
+\keyword{utilities}
+

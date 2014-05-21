@@ -1,0 +1,21 @@
+\name{map2}
+\alias{map2}
+\title{Addition to plot proper map without borders}
+\usage{
+map2(interior = F, add = T, ...)
+}
+\arguments{
+  \item{interior}{logical, should country borders be
+  plotted? defaults to FALSE}
+
+  \item{add}{logical, should map be added to existing plot?
+  devaults to TRUE}
+
+  \item{...}{Additional arguments passed to map}
+}
+\description{
+Plots map without borders and adds missing lakes and inland
+seas
+}
+\keyword{utilities}
+

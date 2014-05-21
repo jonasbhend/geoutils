@@ -1,4 +1,6 @@
 #' Compute distance between points on the globe
+#' 
+#' This function computes distances between an arbitrary number of points on the globe
 #'
 #' @param lon,lat points from which distance is measured (in degree)
 #' @param lon0,lat0 points to which distance is measured (in degree)

@@ -1,10 +1,12 @@
 \name{fullfilter}
 \alias{applyfilter}
 \alias{desired_response}
+\alias{filter9p}
 \alias{fullfilter}
 \alias{get_filter_weights}
 \alias{get_response}
 \alias{make_filter}
+\alias{smoother}
 \title{Filter functions for 'NetCDF' objects}
 \usage{
 fullfilter(x, h)
@@ -18,6 +20,10 @@ desired_response(fr, type = "lowpass", accuracy = 1e-05)
 get_filter_weights(n, fr, accuracy = 1e-05)
 
 make_filter(n, fr, type = "lowpass", ...)
+
+filter9p(x)
+
+smoother(x, df = 5)
 }
 \arguments{
   \item{x}{time series or 'NetCDF' object}
@@ -35,6 +41,8 @@ make_filter(n, fr, type = "lowpass", ...)
 
   \item{...}{additional arguments passed to
   \code{get_filter_weights}}
+
+  \item{df}{degrees of freedom for spline smoothing}
 }
 \description{
 \code{fullfilter} applies a moving average filter to the

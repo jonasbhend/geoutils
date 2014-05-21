@@ -1,0 +1,18 @@
+\name{hclpalette}
+\alias{hclpalette}
+\title{Plots a palette or two hcl hues (through white)}
+\usage{
+hclpalette(x, hues = c(0, 240))
+}
+\arguments{
+  \item{x}{number of colours returned}
+
+  \item{hues}{two hues for the colour endpoints (in the
+  interval from 0 to 360)}
+}
+\description{
+This function returns a number of colours that form an hcl
+palette based on the two hues provided
+}
+\keyword{plot}
+

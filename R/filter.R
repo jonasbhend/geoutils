@@ -4,6 +4,8 @@
 #' @aliases desired_response
 #' @aliases get_filter_weights
 #' @aliases make_filter
+#' @aliases filter9p
+#' @aliases smoother
 #' 
 #' @title Filter functions for 'NetCDF' objects
 #'
@@ -157,6 +159,67 @@ make_filter <- function(n, fr, type="lowpass", ...) {
   }
   
   as.vector(a)
+}
+
+#' @rdname fullfilter
+#' @export
+filter9p <- function(x){
+  if (!is.loaded('filter9p', type='Fortran')){
+    dyn.load("~/src/R-subroutines.dir/filter9p.so")
+  }
+  
+  dimx <- dim(x)
+  ndim <- length(dimx)
+  
+  n <- c(dimx[1],dimx[2],length(x)/prod(dimx[1:2]))
+  
+  tmp <- array(x, dim=n)
+  missval <- -1e20
+  tmp[is.na(tmp)] <- missval
+  
+  tmp2 <- .Fortran("filter9p", n = as.integer(n), x=as.double(tmp), missval=as.double(missval))$x
+  tmp2[tmp2 == missval] <- NA
+  tmp2 <- array(tmp2, dimx)
+  
+  return(tmp2)
+}
+
+#' @rdname fullfilter
+#' @param df degrees of freedom for spline smoothing
+#' @export
+smoother <- function(x, df=5) {
+  smfun <- function(y, df=df){
+    mask <- !is.na(y)
+    if (any(mask)){
+      xout <- y
+      xout[mask] <- smooth.spline(which(mask), y=y[mask], df=df)$y
+    } else {
+      xout <- y
+    }
+    return(xout)
+  }
+  dims <- dim(x)
+  ndims <- length(dims)
+  if ('time' %in% names(attributes(x))){
+    nseas <- median(table(floor(attr(x, 'time'))))
+    if (nseas > 1){
+      xtmp <- collapse2mat(x, first=FALSE)
+      xtmp <- array(xtmp, c(nrow(xtmp)*nseas, ncol(xtmp)/nseas))
+      xout <- apply(xtmp, 1, smfun, df=df)
+      xout <- array(t(xout), dims)
+    } else {
+      xout <- apply(x, seq(1, ndims - 1), smfun, df=df)
+      xout <- aperm(xout, c(2:ndims, 1))
+    }
+  } else {
+    xout <- apply(x, seq(1,ndims - 1), smfun, df=df)
+    xout <- aperm(xout, c(2:ndims, 1))
+  }      
+  attnames <- setdiff(names(attributes(x)), 'dim')
+  for (atn in attnames){
+    attr(xout, atn) <- attr(x, atn)
+  }
+  return(xout)
 }
 
 
