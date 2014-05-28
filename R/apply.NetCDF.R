@@ -27,7 +27,7 @@ apply.NetCDF <- function(x, dims, fun, ...){
     }
   } else {
     ## deal with the case of applying function to time dimension
-    nseas <- median(table(ceiling(attr(x, 'time'))))
+    nseas <- median(table(floor(attr(x, 'time'))))
     indims <- dim(x)
     tmpdims <- c(dim(x)[-length(dim(x))], nseas, dim(x)[length(dim(x))]/nseas)
     outdims <- c(indims[dims], nseas)
