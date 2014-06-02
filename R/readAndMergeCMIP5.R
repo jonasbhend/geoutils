@@ -1,4 +1,4 @@
-#' Read in a collate a collection of NetCDF files.
+#' Read in and collate a collection of NetCDF files.
 #'
 #' This function reads in data in CMIP5-like format and merges the
 #' corresponding 'historical' and 'rcp' runs.
@@ -14,7 +14,7 @@
 #' @param verbose logical, should progres notes be printed to screen?
 #' @param startyear,endyear what years should time series be clipped to?
 #' @param seas what seasons should be read in (see \code{\link{readSeasNetCDF}})
-#' @param min.ncol No idea (at time of writing)
+#' @param min.ncol Minimum number of time steps in historical to be included
 #' @param varname variable name (see \code{\link{readNetCDF}})
 #' @param mask logical, index of grid boxes to retain (see \code{\link{readNetCDF}})
 #' @keywords utilities
@@ -127,6 +127,10 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
             print(paste('Time in historical', model, runi, 'is wrong'))
             next ## advance to next iteration
           }
+          if (attr(hdtmp, 'units') != attr(dtmp, 'units')){
+            print(paste('Units differ for', model, runi))
+            next ## advance to next iteration
+          }
           dtmp <- try(merge(hdtmp, dtmp), silent=TRUE)
           if (class(dtmp) == 'try-error') next
           rm(hdtmp)
@@ -137,6 +141,10 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
             if (ncol(hgtmp) == min.ncol) next ## advance to next iteration
             if (diff(range(attr(hgtmp, 'time'))) > 2000){
               print(paste('Time in globalmean historical', model, runi, 'is wrong'))
+              next ## advance to next iteration
+            }
+            if (attr(gtmp, 'units') != attr(hgtmp, 'units')){
+              print(paste('Units differ for', model, runi))
               next ## advance to next iteration
             }
             gtmp <- try(merge(hgtmp, gtmp), silent=TRUE)

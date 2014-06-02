@@ -8,9 +8,19 @@
 #' @param anomaly start and end year of reference period
 #' @param relative logical, should relative anomalies (in percent) be computed?
 #' @param na.thresh minimum fraction of non-missing values in reference period
-#' @param rel.thresh maximum relative anomalies that get computed
-#' @param zero.thresh maximum number of zeros in reference for relative anomalies
-#' to be computed
+#' @param rel.thresh if relative anomalies larger than rel.thresh occur, no
+#'        relative anomalies for this time series is computed
+#' @param zero.thresh maximum fraction of zeroes in reference period (see details)
+#' 
+#' @details
+#' If relative anomalies are computed, both \code{rel.thresh} and \code{zero.thresh}
+#' can be used to deal with cases for which the reference period climatology is close
+#' to zero. \code{rel.thresh} masks all seasonal time series for which there is at least
+#' one relative anomaly larger than the indicated threshold. \code{zero.thresh} on the
+#' other hand uses the fraction of zeroes in the reference period, and masks seasonal
+#' time series with more than the indicated fraction of zeroes in the reference period
+#' as missing. For example, if set to 1 (the default), only time series with a reference
+#' climatology of zero (all values equal zero in the reference period) will be masked.
 #' 
 #' @keywords utilities
 #' @export

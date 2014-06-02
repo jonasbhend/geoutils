@@ -4,12 +4,12 @@
 #' the respective attributes.
 #' 
 #' @param x input object of class NetCDF (max. 2-d)
+#' @param type of plot ('ts' for lines, 'mean' and 'trend' for maps)
 #' @param ti index of time step to be plotted (map only)
 #' @param si index of spatial grid to be plotted
 #' @param levs levels to be used for contouring
 #' @param col colours to be used for contouring or lines
 #' @param pt.cex expansion factor for points
-#' @param type of plot ('ts' for lines, 'mean' and 'trend' for maps)
 #' @param symmetric logical, should contouring be symmetric about zero
 #' @param cut logical, should contouring be cut to range of data
 #' @param add logical, should plot be added
@@ -21,6 +21,7 @@
 #' @param nlevs number of contour interval (input to \code{pretty})
 #' @param colramp colour ramp to be used with colourramp function (default)
 #' @param seas logical, should seasons be plotted individually?
+#' @param ... additional arguments passed to \code{plot.default}
 #' 
 #' @keywords plot
 #' @examples
@@ -29,10 +30,10 @@
 #' plot(x, type='ts', si=1:3)
 #' 
 #' ## also plot a map (very rudimentary)
-#' plot(x, type='trend', pt.cex=3)
+#' plot(x, type='trend')
 #' 
 #' @export
-plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time' %in% names(attributes(x))) seq(along=attr(x, 'time')) else 1, si=1, levs=NULL, col=NULL, pt.cex=2, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', seas=F, ...){
+plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=1:dim(x)[length(dim(x))], si=1, levs=NULL, col=NULL, pt.cex=NULL, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', seas=F, ...){
   if (type == 'ts'){
     xtmp <- select_region(x, si)
     tim <- if ('time' %in% names(attributes(x))) attr(x, 'time') else 1:ncol(x)
@@ -58,26 +59,30 @@ plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time
       }
     }
   } else {
-    if ('lon' %in% names(attributes(x))){
+    if ('lon' %in% names(attributes(x)) & 'lat' %in% names(attributes(x))){
       lon <- attr(x, 'lon')
-    } else {
-      lon <- attr(x, names(attributes(x))[2])
-    }
-    if ('lat' %in% names(attributes(x))){
       lat <- attr(x, 'lat')
     } else {
-      lat <- attr(x, names(attributes(x))[3])
-    }
+      ## get all attributes
+      allatt <- lapply(names(attributes(x)), function(y) attr(x, y))
+      iatt <- which(sapply(allatt, length) == nrow(x) & sapply(allatt, is.numeric))
+      if (length(iatt) >= 2){
+        lon <- allatt[[iatt[1]]]
+        lat <- allatt[[iatt[2]]]
+      } else{
+        stop('No spatial coordinates found')
+      }
+    } 
     xtmp <- x
     if (dim(xtmp)[1] == 1 & length(dim(xtmp)) == 3) xtmp <- xtmp[1,,]
     if (length(dim(xtmp)) > 2){
       xtmp <- apply(xtmp, length(dim(x)) - 1:0, mean, na.rm=T)
     } 
     if (type == 'mean'){
-      xout <- apply(xtmp[,ti, drop=F], 1, mean)
+      xout <- apply(xtmp[,ti, drop=F], 1, mean, na.rm=T)
     } else if (type == 'trend' & length(ti) > 1) {
       xtim <- attr(x, 'time')
-      xout <- apply(xtmp, 1, function(x) lm(x[ti] ~ xtim[ti])$coef[2])
+      xout <- apply(xtmp, 1, function(x) if (any(!is.na(x))) lm(x[ti] ~ xtim[ti])$coef[2] else NA)
     }
     if (is.null(levs)) {
       if (symmetric & cut){
@@ -105,11 +110,19 @@ plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=if ('time
     if (max(lon) > xlim[2]){
       lon[lon > xlim[2]] <- lon[lon > xlim[2]] - 360
     }
-    if (add){
-      points(lon,lat,col=col[cut(xout, levs, include.lowest=TRUE)], pch=15, cex=pt.cex, ...)
-    } else {
-      plot(lon,lat,type='p',col=col[cut(xout, levs, include.lowest=TRUE)], pch=15, cex=pt.cex, xlab=xlab, ylab=ylab, ylim=ylim, xlim=xlim, xaxs=xaxs, yaxs=yaxs, ...)
+    if (!add) plot(lon, lat, type='n', xlab=xlab, ylab=ylab, ylim=ylim, xlim=xlim, xaxs=xaxs, yaxs=yaxs, ...)
+    ## figure out size of plot symbol if not set
+    if (is.null(pt.cex)){
+      ## get width and height
+      wh <- diff(par('usr'))[c(1,3)]
+      dimperpoint <- wh / c(length(unique(lon)), length(unique(lat)))
+      ## standard size of character
+      psize <- par('cxy')
+      ## point size
+      pt.cex <- max(2*dimperpoint / psize)
+      print(paste('pt.cex =', round(pt.cex,2)))
     }    
+    points(lon,lat,col=col[cut(xout, levs, include.lowest=TRUE)], pch=15, cex=pt.cex, ...)
     out <- list(lev=levs, col=col)
     class(out) <- 'plotmap'
     invisible(out)

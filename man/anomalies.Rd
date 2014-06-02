@@ -15,15 +15,25 @@ anomalies(x, anomaly = c(1961, 1990), relative = FALSE, na.thresh = 0.8,
 
 \item{na.thresh}{minimum fraction of non-missing values in reference period}
 
-\item{rel.thresh}{maximum relative anomalies that get computed}
+\item{rel.thresh}{if relative anomalies larger than rel.thresh occur, no
+relative anomalies for this time series is computed}
 
-\item{zero.thresh}{maximum number of zeros in reference for relative anomalies
-to be computed}
+\item{zero.thresh}{maximum fraction of zeroes in reference period (see details)}
 }
 \description{
 This function computes anomalies with respect to a given reference period. For
 the function to work, the reference period must be fully in the time series
 provided.
+}
+\details{
+If relative anomalies are computed, both \code{rel.thresh} and \code{zero.thresh}
+can be used to deal with cases for which the reference period climatology is close
+to zero. \code{rel.thresh} masks all seasonal time series for which there is at least
+one relative anomaly larger than the indicated threshold. \code{zero.thresh} on the
+other hand uses the fraction of zeroes in the reference period, and masks seasonal
+time series with more than the indicated fraction of zeroes in the reference period
+as missing. For example, if set to 1 (the default), only time series with a reference
+climatology of zero (all values equal zero in the reference period) will be masked.
 }
 \keyword{utilities}
 

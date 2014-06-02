@@ -3,15 +3,17 @@
 \alias{plot.NetCDF}
 \title{Function to plot objects of class 'NetCDF'}
 \usage{
-\method{plot}{NetCDF}(x, type = if (nrow(x) == 1) "ts" else "mean", ti = if
-  ("time" \%in\% names(attributes(x))) seq(along = attr(x, "time")) else 1,
-  si = 1, levs = NULL, col = NULL, pt.cex = 2, symmetric = FALSE,
-  cut = TRUE, add = FALSE, xlab = "", ylab = "", xlim = NULL,
-  ylim = NULL, xaxs = "i", yaxs = "i", lty = seq(along = si), lwd = 3,
-  nlevs = 12, colramp = "redblue", seas = F, ...)
+\method{plot}{NetCDF}(x, type = if (nrow(x) == 1) "ts" else "mean",
+  ti = 1:dim(x)[length(dim(x))], si = 1, levs = NULL, col = NULL,
+  pt.cex = NULL, symmetric = FALSE, cut = TRUE, add = FALSE,
+  xlab = "", ylab = "", xlim = NULL, ylim = NULL, xaxs = "i",
+  yaxs = "i", lty = seq(along = si), lwd = 3, nlevs = 12,
+  colramp = "redblue", seas = F, ...)
 }
 \arguments{
 \item{x}{input object of class NetCDF (max. 2-d)}
+
+\item{type}{of plot ('ts' for lines, 'mean' and 'trend' for maps)}
 
 \item{ti}{index of time step to be plotted (map only)}
 
@@ -22,8 +24,6 @@
 \item{col}{colours to be used for contouring or lines}
 
 \item{pt.cex}{expansion factor for points}
-
-\item{type}{of plot ('ts' for lines, 'mean' and 'trend' for maps)}
 
 \item{symmetric}{logical, should contouring be symmetric about zero}
 
@@ -46,6 +46,8 @@
 \item{colramp}{colour ramp to be used with colourramp function (default)}
 
 \item{seas}{logical, should seasons be plotted individually?}
+
+\item{...}{additional arguments passed to \code{plot.default}}
 }
 \description{
 This function allows plotting line plots and maps of NetCDF objects using
@@ -57,7 +59,7 @@ mostattributes(x) <- list(class='NetCDF', time=seq(1950.08333, 1975, 0.25), dim=
 plot(x, type='ts', si=1:3)
 
 ## also plot a map (very rudimentary)
-plot(x, type='trend', pt.cex=3)
+plot(x, type='trend')
 }
 \keyword{plot}
 

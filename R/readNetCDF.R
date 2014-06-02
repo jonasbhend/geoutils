@@ -12,6 +12,10 @@
 #' dimension of the input data so that seasonal data can be converted from
 #' units per month to units per season with different multiplicative constants
 #' per season.
+#' 
+#' Units attribute will not get converted if multiplicative constant is different
+#' from unity.
+#' 
 #' @keywords utilities
 #' @examples
 #' tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
@@ -127,6 +131,7 @@ readNetCDF <- function(filename, varname=NULL, mask=NULL, mulc=1){
   if (att.get.ncdf(nc, 0, 'forcing')$hasatt){
     attr(out, 'forcing') <- att.get.ncdf(nc, 0, 'forcing')$value
   }
+  attr(out, 'units') <- nc$var[[varname]]$units
   if (any(names(nc$var) %in% c('region', 'regions', 'cluster', 'clusters'))){
     nname <- names(nc$var)[names(nc$var) %in% c('region', 'regions', 'cluster', 'clusters')]
     attr(out, 'regions') <- get.var.ncdf(nc, nname[1])

@@ -23,6 +23,9 @@ The multiplicative factor can be of length 1 or any subset of the time
 dimension of the input data so that seasonal data can be converted from
 units per month to units per season with different multiplicative constants
 per season.
+
+Units attribute will not get converted if multiplicative constant is different
+from unity.
 }
 \examples{
 tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
