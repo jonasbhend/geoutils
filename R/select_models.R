@@ -11,12 +11,32 @@
 #' compatibility.
 #' 
 #' @param x object of class 'NetCDF'
-#' @param modi indices of models to select (first dimension in x)
+#' @param modi indices of models to select (first dimension in x, see details)
+#' 
+#' @details
+#' The model selector can be either a vector of names corresponding to the row
+#' names in \code{x}, a logical vector of length \code{nrow(x)}, or a numerical
+#' vector with indices to retain.
 #' 
 #' @keywords utilities
 #' @export
 select_models <- function(x, modi=1:nrow(x)){
-  if (max(modi) > nrow(x)) stop("Can't select the ensemble members you want")
+  ## convert the model denominator
+  if (is.character(modi)){
+    if (!is.null(rownames(x))){
+      modi <- match(modi, rownames(x))
+    } else {
+      stop('Cannot select models by name - object has not row names')
+    }
+  } else if (is.logical(modi)){
+    if (length(modi) != nrow(x)){
+      stop('Cannot select models - logical vector of indices not of correct length')
+    } else {
+      modi <- which(modi)
+    }
+  } else if (is.numeric(modi)){
+    if (max(modi) > nrow(x)) stop("Can't select the ensemble members you want")    
+  }
   xtmp <- collapse2mat(x, first=TRUE)
   out <- array(xtmp[modi,], c(length(modi), dim(x)[-1]))
   attnames <- setdiff(names(attributes(x)), c('runs','dim', 'dimnames'))

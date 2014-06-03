@@ -1,9 +1,9 @@
-#' Select a region
+#' Select region(s)
 #' 
-#' Function to select regions (2nd last dimension in NetCDF array).
+#' Function to select spatial entities (2nd last dimension in NetCDF array).
 #' 
 #' @param x input array of class NetCDF
-#' @param regi index or name of region to select
+#' @param regi index or name of region(s) to select
 #' 
 #' @details
 #' Named regions to select only work if the NetCDF object contains an attribute
@@ -18,7 +18,15 @@ select_region <- function(x, regi=1){
     } else {
       regi <- match(regi, attr(x, 'regions'))    
     } 
-  }
+  } else if (is.logical(regi)){
+    if (is.null(attr(x, 'regions'))){
+      stop('No attribute with region names')
+    } else if (length(attr(x, 'regions')) != length(regi)){
+      stop('length of logical region selector does not match number of regions')
+    } else {
+      regi <- which(regi)
+    }
+  } 
   ndim <- length(dim(x))
   xtmp <- collapse2mat(aperm(x, c(ndim - 1, setdiff(1:ndim, ndim-1))), first=TRUE)
   outdims <- dim(x)[-(ndim-1)]
