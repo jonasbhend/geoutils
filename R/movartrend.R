@@ -1,5 +1,5 @@
 #' @name movartrend
-#' @aliases trendresid trendcov artrend
+#' @aliases trendresid trendcov artrend convertx
 #' 
 #' @title
 #' Compute trends on NetCDF objects
@@ -9,6 +9,12 @@
 #' linear regressions on the time series, \code{trendresid} and \code{trendcov} 
 #' compute simple linear regression with the latter returning the covariance
 #' matrix of the standard errors (i.e. for multivariate analyses).
+#' 
+#' The function \code{convertx} is used to expand an object of type NetCDF
+#' to fit another object of type NetCDF. The standard use case would be to 
+#' expand a NetCDF object with ensemble mean global mean temperature to an
+#' object with multiple models and simulations. \code{convertx} is used in 
+#' \code{movartrend} to convert a potential predictor for the regression.
 #' 
 #' 
 #' @param data object of type NetCDF containing the time series
@@ -22,12 +28,15 @@
 #' @param plotable logical, should output be rearrange to make it plotable?
 #' @param resid logical, should residuals of regression be returned?
 #' 
+#' @examples
+#' ## result should be roughly 1
+#' print(movartrend(t(1:100 + rnorm(100, sd=10)), trndln=100)$trend[1])
+#' 
+#' @useDynLib geoutils
+#' 
 #' @keywords utilities
 #' @export
 movartrend <- function(data, trndln, x=NULL, missthresh = 0.8, robust = FALSE, gaps = FALSE, plotable=TRUE, resid=FALSE){
-  if (!is.loaded('artrend', type='Fortran')){
-    dyn.load("~/R/subroutines/artrend.so")
-  }
   
   if (length(dim(data)) > 1){
     dims <- dim(data)
@@ -115,9 +124,7 @@ movartrend <- function(data, trndln, x=NULL, missthresh = 0.8, robust = FALSE, g
 #'@rdname movartrend
 #'@export
 trendcov <- function(data, x=NULL, missthresh = 0.8){
-  if (!is.loaded('trendcov', type='Fortran')){
-    dyn.load("~/R/subroutines/trend_cov_resid.so")
-  }
+
   if (length(dim(data)) > 1){
     dims <- dim(data)
     dat  <- collapse2mat(data, first=FALSE)
@@ -159,9 +166,7 @@ trendcov <- function(data, x=NULL, missthresh = 0.8){
 #'@rdname movartrend
 #'@export
 trendresid <- function(data, x=NULL, missthresh = 0.8){
-  if (!is.loaded('trendresid', type='Fortran')){
-    dyn.load("~/R/subroutines/trend_resid.so")
-  }
+
   if (length(dim(data)) > 1){
     dims <- dim(data)
     dat  <- collapse2mat(data, first=FALSE)
@@ -231,5 +236,47 @@ artrend <- function(data, x=NULL, missthresh=0.8){
   }
   names(out) <- c('Estimate', 'SE', 'SE - AR(1)', 'SE - AR(2)')
   return(out)
+}
+
+#' @rdname movartrend
+#' @param x object of type NetCDF to be expanded to fit
+#' dimensions of \code{dat}
+#' @param data object of type NetCDF to be used to match
+#' attributes (e.g. time steps etc.)
+#' @param dat object to infer dimensions of output
+#' @export
+convertx <- function(x=NULL, data, dat=data){
+  if (is.null(x)){
+    if ('time' %in% names(attributes(data))){
+      tim <- attr(data, 'time')
+      nspace <- length(data)/length(tim)
+      x <- array(rep(tim, each=nspace), dim(dat))
+    } else {
+      x <- array(rep(1:ncol(dat), each=nrow(dat)), dim(dat))
+    }
+  } else {
+    if (length(data) %% length(x) != 0) stop("Dimensions of x and data don't match")
+    if (length(x) == length(data)){
+      x <- array(x, dim(dat))
+    } else if (length(x) == dim(data)[length(dim(data))]){
+      x <- array(rep(x, each=prod(dim(data)[-length(dim(data))])), dim(dat))
+    } else {
+      ## find the correct dimensions to expand in data
+      xdims <- dim(x)
+      ddims <- dim(data)
+      if (length(xdims) == length(ddims) - 1){
+        xi <- which(ddims %in% xdims)
+        if (length(xi) == length(ddims)) {
+          warning('Ambiguity in dimensions --> assuming first has to be expanded')
+          xi <- xi[2:length(xi)]
+        }
+        xout <- aperm(array(rep(x, length=length(data)), c(ddims[xi], ddims[-xi])), c(xi, setdiff(seq(along=ddims), xi)))
+        x <- array(xout, dim(dat))
+      } else {
+        stop(paste('Case not supported: dimensions of data', ddims, 'dimension of x', xdims))
+      }
+    }
+  }
+  return(x)
 }
 
