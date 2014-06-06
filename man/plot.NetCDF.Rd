@@ -5,9 +5,9 @@
 \usage{
 \method{plot}{NetCDF}(x, type = if (nrow(x) == 1) "ts" else "mean",
   ti = 1:dim(x)[length(dim(x))], si = 1, levs = NULL, col = NULL,
-  pt.cex = NULL, symmetric = FALSE, cut = TRUE, add = FALSE,
-  xlab = "", ylab = "", xlim = NULL, ylim = NULL, xaxs = "i",
-  yaxs = "i", lty = seq(along = si), lwd = 3, nlevs = 12,
+  na.col = NULL, pt.cex = NULL, symmetric = FALSE, cut = TRUE,
+  add = FALSE, xlab = "", ylab = "", xlim = NULL, ylim = NULL,
+  xaxs = "i", yaxs = "i", lty = seq(along = si), lwd = 3, nlevs = 12,
   colramp = "redblue", seas = F, ...)
 }
 \arguments{
@@ -22,6 +22,8 @@
 \item{levs}{levels to be used for contouring}
 
 \item{col}{colours to be used for contouring or lines}
+
+\item{na.col}{colour to be used for missing values (spatial plot only)}
 
 \item{pt.cex}{expansion factor for points}
 
@@ -54,12 +56,20 @@ This function allows plotting line plots and maps of NetCDF objects using
 the respective attributes.
 }
 \examples{
-x <- array(rnorm(10000), c(100,100)) + as.vector(outer(sort(rnorm(10)), sort(rnorm(10, mean=15)), '+')) + rep(c(-2, 0, 3, 1), each=100)
-mostattributes(x) <- list(class='NetCDF', time=seq(1950.08333, 1975, 0.25), dim=c(100,100), lon=rep(1:10, 10), lat=rep(1:10, each=10))
-plot(x, type='ts', si=1:3)
+tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+## average over all time steps
+plot(tas)
 
-## also plot a map (very rudimentary)
-plot(x, type='trend')
+## also plot the trends
+plot(tas, type='trend', sym=TRUE)
+
+## plot the same with legend
+layout(matrix(1:2, 2, 1), height=c(5, lcm(2.5)))
+par(mar=c(2,2,1,1))
+tmp <- plot(tas, type='trend', sym=TRUE, na.col='lightgrey')
+## if pt.cex is not set, the default pt.cex will be displayed
+map(add=T, interior=F)
+plot_colourbar(tmp, units='K/a')
 }
 \keyword{plot}
 

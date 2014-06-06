@@ -14,5 +14,15 @@ select_seas(x, seas)
 Function to select specified season (by fractional year, i.e. 0.5 for
 summer) from an object of class 'NetCDF'.
 }
+\examples{
+xx <- t(rnorm(100) + c(-2, 0,3,1))
+attr(xx, 'time') <- seq(1960, by=0.25, length=100)
+class(xx) <- 'NetCDF'
+
+## plot all seasons with individual seasons
+plot(xx, type='ts', seas=T, col=1, lty=1, lwd=1)
+## highlight one of the season
+plot(select_seas(xx, 0.5), lwd=2, col=2, add=T)
+}
 \keyword{utilities}
 

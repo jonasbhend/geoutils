@@ -18,5 +18,23 @@ Distance between points in km
 \description{
 This function computes distances between an arbitrary number of points on the globe
 }
+\examples{
+## read in some netcdf data
+tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+lons <- attr(tas, 'lon')
+lats <- attr(tas, 'lat')
+## compute distance from greenwich
+gdist <- compute_dist(lons, lats, 0, 50)
+
+## set up new netcdf object for plotting
+gdist <- as.matrix(gdist)
+class(gdist) <- 'NetCDF'
+attr(gdist, 'lon') <- lons
+attr(gdist, 'lat') <- lats
+
+## plot the distances
+plot(gdist, type='mean', ti=1)
+map(add=T, interior=F)
+}
 \keyword{utilities}
 

@@ -3,7 +3,7 @@
 \alias{detect_break}
 \title{Detect step changes}
 \usage{
-detect_break(x, breaktime = 2005, n = 50, detrend = TRUE)
+detect_break(x, breaktime = 2005, n = 50, detrend = TRUE, log = TRUE)
 }
 \arguments{
 \item{x}{input object of type NetCDF}
@@ -13,11 +13,33 @@ detect_break(x, breaktime = 2005, n = 50, detrend = TRUE)
 \item{n}{number of years in climatology (before and after break point)}
 
 \item{detrend}{logical, should linear trend be accounted for?}
+
+\item{log}{logical, should log-transformed p-values be returned?}
+}
+\value{
+A list containing the p-values for each suspected break
+(per region and season) and the log aggregate p-value for all seasons
+using Fisher's method to combine the break tests for individual seasons.
 }
 \description{
 This function checks whether there are step changes present in a time series
 at a pre-specified time (generally 2005 for CMIP5 historical to RCP scenario
 transition).
+}
+\examples{
+## set up time series with increasing break at 50/51
+nseas <- 4
+xx <- outer(seq(0,3/sqrt(50),length=50), rep(c(0,1), each=50*nseas), '*')
+xx <- xx + rnorm(length(xx)) + rep(seq(0,10,length=ncol(xx)), each=nrow(xx))
+class(xx) <- 'NetCDF'
+attr(xx, 'time') <- seq(1, length=100*nseas, by=1/nseas)
+
+## detect the break
+dd <- detect_break(xx, 50, log=FALSE)
+
+## look at results
+plot(dd$fish, type='h', lend=3, lwd=2)
+abline(h=0.05, lty=2)
 }
 \keyword{utilities}
 

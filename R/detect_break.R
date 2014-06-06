@@ -8,10 +8,31 @@
 #' @param breaktime last time step (year) of first period
 #' @param n number of years in climatology (before and after break point)
 #' @param detrend logical, should linear trend be accounted for?
+#' @param log logical, should log-transformed p-values be returned?
 #' 
+#' @return
+#' A list containing the p-values for each suspected break 
+#' (per region and season) and the log aggregate p-value for all seasons
+#' using Fisher's method to combine the break tests for individual seasons.
+#' 
+#' @examples
+#' ## set up time series with increasing break at 50/51
+#' nseas <- 4
+#' xx <- outer(seq(0,3/sqrt(50),length=50), rep(c(0,1), each=50*nseas), '*')
+#' xx <- xx + rnorm(length(xx)) + rep(seq(0,10,length=ncol(xx)), each=nrow(xx))
+#' class(xx) <- 'NetCDF'
+#' attr(xx, 'time') <- seq(1, length=100*nseas, by=1/nseas)
+#' 
+#' ## detect the break
+#' dd <- detect_break(xx, 50, log=FALSE)
+#'
+#' ## look at results
+#' plot(dd$fish, type='h', lend=3, lwd=2)
+#' abline(h=0.05, lty=2)
+#'     
 #' @keywords utilities
 #' @export
-detect_break <- function(x, breaktime=2005, n=50, detrend=TRUE){
+detect_break <- function(x, breaktime=2005, n=50, detrend=TRUE, log=TRUE){
   xtime <- attr(x, 'time')
   ## rudimentary checking
   if (is.null(xtime))    stop('Break detection on this object not possible (no time attribute)')
@@ -42,13 +63,14 @@ detect_break <- function(x, breaktime=2005, n=50, detrend=TRUE){
     z <- (time_average(d2, n, type='start') - time_average(d1, n, type='start')) / as.vector(sqrt((apply.NetCDF(d1, 1:(ndims - 1), sd, na.rm=T)**2 + apply.NetCDF(d2, 1:(ndims - 1), sd, na.rm=T)**2) / n / 2))
   }
   ## compute probability of these standardised differences occuring (assuming iid)
-  zprob <- dt(z, df=2*n - 2, log=T)
+  zprob <- log(2) + pnorm(-abs(z), log=TRUE)
   ## combine p-values using Fisher's method
   nind <- 1:(ndims - 2) ## assuming last is seasons and second last is regions
-  zfish <- -2 * apply(zprob, nind, sum, na.rm=T)
+  zfish <- - 2 * apply(zprob, nind, sum, na.rm=T)
   ## number of non-NULL t-tests
   kfish <- apply(!is.na(zprob), nind, sum, na.rm=T)
-  zfchi <- dchisq(zfish, df=kfish, log=TRUE)
-  out <- list(pval=zprob, fisher=zfchi)
+  zfchi <- pchisq(zfish, df=2*kfish, log=TRUE, low=FALSE)
+  out <- list(pval=if (log) zprob else exp(zprob), 
+              fisher=if (log) zfchi else exp(zfchi))
   return(out)
 }

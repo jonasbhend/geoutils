@@ -277,6 +277,8 @@ convertx <- function(x=NULL, data, dat=data){
       }
     }
   }
+  ## rewrite the attributes
+  attributes(x) <- attributes(dat)
   return(x)
 }
 

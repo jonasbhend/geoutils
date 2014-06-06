@@ -35,5 +35,15 @@ time series with more than the indicated fraction of zeroes in the reference per
 as missing. For example, if set to 1 (the default), only time series with a reference
 climatology of zero (all values equal zero in the reference period) will be masked.
 }
+\examples{
+tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+## compute anomalies wrt first year of series
+tasanom <- anomalies(tas, c(1961,1961))
+## get a grid point with many obs
+si <- which.max(apply(!is.na(tasanom), 1, sum))
+## plot time series of anomalies
+plot(tasanom, type='ts', si=si)
+abline(h=0, lty=2)
+}
 \keyword{utilities}
 

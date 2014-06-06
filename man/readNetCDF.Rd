@@ -30,6 +30,7 @@ from unity.
 \examples{
 tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
 names(attributes(tas))
+dim(tas)
 }
 \keyword{utilities}
 

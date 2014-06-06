@@ -6,6 +6,9 @@
 #' @param add logical, should map be added to existing plot? devaults to TRUE
 #' @param ... Additional arguments passed to map
 #' 
+#' @example
+#' map2(add=F)
+#' 
 #' @keywords utilities
 #' @export
 #' 

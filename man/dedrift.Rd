@@ -3,17 +3,36 @@
 \alias{dedrift}
 \title{Function to remove drift from model runs}
 \usage{
-dedrift(data, ctl, varname = "pr")
+dedrift(data, ctl)
 }
 \arguments{
 \item{data}{(list of) input time series of type NetCDF}
 
 \item{ctl}{(list of) control run time series of type NetCDF}
-
-\item{varname}{variable name (if data is no list)}
 }
 \description{
 Simple drift correction of model runs given a corresponding control run
+}
+\examples{
+## synthetic historical and control time series
+xx <- t(rnorm(400) + c(-4,0,3,1) + seq(0,sqrt(10), length=400)**2)
+attr(xx, 'time') <- seq(1900, by=0.25, length=400)
+class(xx) <- 'NetCDF'
+
+## synthetic control runs
+xctl <- t(as.vector(outer(c(-5,-3,-2,-1), log(seq(1, 100, length=300)), '*')) + rnorm(1200))
+attr(xctl, 'time') <- seq(1750, by=0.25, length=length(xctl))
+class(xctl) <- 'NetCDF'
+
+## without dedrifting
+plot(xx, type='ts', seas=T, main='Synthetic time series (forced simulation)')
+
+## control run
+plot(xctl, type='ts', seas=T, main='Synthetic control')
+
+## dedrifted forced run
+plot(dedrift(xx, xctl), type='ts', seas=T, main='Dedrifted forced simulation')
+plot(xx, type='ts', seas=T, lwd=1, lty=2, add=T)
 }
 \keyword{utilities}
 

@@ -6,6 +6,25 @@
 #' @param lon0,lat0 points to which distance is measured (in degree)
 #' @param Rearth Earth's radius (defaults to 6371km)
 #' @return Distance between points in km
+#' 
+#' @examples
+#' ## read in some netcdf data
+#' tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+#' lons <- attr(tas, 'lon')
+#' lats <- attr(tas, 'lat')
+#' ## compute distance from greenwich
+#' gdist <- compute_dist(lons, lats, 0, 50)
+#' 
+#' ## set up new netcdf object for plotting
+#' gdist <- as.matrix(gdist)
+#' class(gdist) <- 'NetCDF'
+#' attr(gdist, 'lon') <- lons
+#' attr(gdist, 'lat') <- lats
+#' 
+#' ## plot the distances
+#' plot(gdist, type='mean', ti=1)
+#' map2()
+#' 
 #' @keywords utilities
 #' @export
 compute_dist <- function(lon, lat, lon0, lat0, Rearth=6371){

@@ -9,6 +9,7 @@
 #' @param si index of spatial grid to be plotted
 #' @param levs levels to be used for contouring
 #' @param col colours to be used for contouring or lines
+#' @param na.col colour to be used for missing values (spatial plot only)
 #' @param pt.cex expansion factor for points
 #' @param symmetric logical, should contouring be symmetric about zero
 #' @param cut logical, should contouring be cut to range of data
@@ -25,15 +26,27 @@
 #' 
 #' @keywords plot
 #' @examples
-#' x <- array(rnorm(10000), c(100,100)) + as.vector(outer(sort(rnorm(10)), sort(rnorm(10, mean=15)), '+')) + rep(c(-2, 0, 3, 1), each=100)
-#' mostattributes(x) <- list(class='NetCDF', time=seq(1950.08333, 1975, 0.25), dim=c(100,100), lon=rep(1:10, 10), lat=rep(1:10, each=10))
-#' plot(x, type='ts', si=1:3)
+#' tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+#' ## average over all time steps
+#' plot(tas)
+#' map2()
 #' 
-#' ## also plot a map (very rudimentary)
-#' plot(x, type='trend')
+#' ## also plot the trends
+#' plot(tas, type='trend', sym=TRUE)
+#' map2()
+#' 
+#' ## plot the same with legend
+#' layout(matrix(1:2, 2, 1), height=c(5, lcm(2.5)))
+#' par(mar=c(2,2,1,1))
+#' tmp <- plot(tas, type='trend', sym=TRUE, na.col='lightgrey')
+#' ## if pt.cex is not set, the default pt.cex will be displayed
+#' map2()
+#' plot_colourbar(tmp, units='K/a')
+#' 
 #' 
 #' @export
-plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=1:dim(x)[length(dim(x))], si=1, levs=NULL, col=NULL, pt.cex=NULL, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', seas=F, ...){
+plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=1:dim(x)[length(dim(x))], si=1, levs=NULL, col=NULL, na.col=NULL, pt.cex=NULL, symmetric=FALSE, cut=TRUE, add=FALSE, xlab='', ylab='', xlim=NULL, ylim=NULL, xaxs='i', yaxs='i', lty=seq(along=si), lwd=3, nlevs=12, colramp='redblue', seas=F, ...){
+  ###### time series plots #############################
   if (type == 'ts'){
     xtmp <- select_region(x, si)
     tim <- if ('time' %in% names(attributes(x))) attr(x, 'time') else 1:ncol(x)
@@ -58,6 +71,7 @@ plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=1:dim(x)[
         lines(tim, xtmp[j,], lwd=lwd, col=cols[1], lty=rep(lty, length=length(si))[j])
       }
     }
+    ###### spatial plots #############################
   } else {
     if ('lon' %in% names(attributes(x)) & 'lat' %in% names(attributes(x))){
       lon <- attr(x, 'lon')
@@ -122,9 +136,10 @@ plot.NetCDF <- function(x, type=if (nrow(x) == 1) 'ts' else 'mean', ti=1:dim(x)[
       pt.cex <- max(2*dimperpoint / psize)
       print(paste('pt.cex =', round(pt.cex,2)))
     }    
-    points(lon,lat,col=col[cut(xout, levs, include.lowest=TRUE)], pch=15, cex=pt.cex, ...)
-    out <- list(lev=levs, col=col)
-    class(out) <- 'plotmap'
+    points(lon,lat,col=col[cut(xout, levs, include.lowest=TRUE)], pch=15, cex=pt.cex)
+    ## add in colour for missing values
+    if (!is.null(na.col) & any(is.na(xout))) points(lon[is.na(xout)], lat[is.na(xout)], pch=15, cex=pt.cex, col=na.col)
+    out <- list(lev=levs, col=col, sea.col=na.col)
     invisible(out)
   }
 }

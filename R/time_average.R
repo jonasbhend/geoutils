@@ -14,7 +14,24 @@
 #' of the time series, \code{end} sets the offset so that the last
 #' average ends in the last year of the time series, \code{even} 
 #' sets the offset so that \code{modulo(year, n) == 0} for the first year
-#' in the first average (i.e. for \code{n=5} averages such as 1910-1914)
+#' in the first average (i.e. for \code{n=5} averages such as 1910-1914).
+#' 
+#' The time attribute reflects the average over the same block as the average
+#' of the data, that is \code{n}-yearly averages will be centered.
+#' 
+#' @examples
+#' tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+#' 
+#' ## compute 5-yearly averages
+#' tas.avg <- time_average(tas, 5, type='start')
+#' 
+#' ## get a grid point with little missing values
+#' si <- which.max(apply(!is.na(tas), 1, sum))
+#' 
+#' ## plot the data
+#' plot(tas, type='ts', si=si, lwd=1)
+#' plot(tas.avg, type='ts', si=si, col=2, lwd=2, add=T)
+#' 
 #' @keywords utilities
 #' @export
 
@@ -36,22 +53,18 @@ time_average <- function(x, n, offset=NULL, type='start'){
     
     # compute offset (offset = 0 for control runs)
     # offset in years
-    if (tim[1] < 100){
-      offset  <- 0
-    } else {
-      if (is.null(offset)){
-        if (type == 'even') {
-          offset  <- (which.max((tim %% n) == 0) - 1)/nseas
-        } else if (type == 'start') {
-          offset <- 0
-        } else if (type == 'end') {
-          offset <- (length(tim)/nseas) %% n
-        }
+    if (is.null(offset)){
+      if (type == 'even') {
+        offset  <- (which.max((tim %% n) == 0) - 1)/nseas
+      } else if (type == 'start') {
+        offset <- 0
+      } else if (type == 'end') {
+        offset <- (length(tim)/nseas) %% n
       }
     }
     
     # number of timesteps and blocks in output
-    ntimes  <- dims[length(dims)] - offset*nseas
+    ntimes  <- length(tim) - offset*nseas
     ntimes <- floor(ntimes/nseas)
     nblocks <- floor(ntimes/n)
     

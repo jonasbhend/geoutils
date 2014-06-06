@@ -6,6 +6,16 @@
 #' @param startyear first year to be selected
 #' @param endyear last year to be selected
 #' 
+#' @examples
+#' xx <- t(rnorm(400) + c(-2, 0,3,1))
+#' attr(xx, 'time') <- seq(1901, by=0.25, length=400)
+#' class(xx) <- 'NetCDF'
+#' 
+#' ## plot all seasons with individual seasons
+#' plot(xx, type='ts', seas=T, col=1, lty=1, lwd=1)
+#' ## highlight subset of data
+#' plot(select_time(xx, 1961, 1990), lwd=2, add=T, seas=T)
+#' 
 #' @keywords utilities
 #' @export
 select_time   <- function(x, startyear, endyear){

@@ -25,7 +25,23 @@ The automated way to set the offset works as following.
 of the time series, \code{end} sets the offset so that the last
 average ends in the last year of the time series, \code{even}
 sets the offset so that \code{modulo(year, n) == 0} for the first year
-in the first average (i.e. for \code{n=5} averages such as 1910-1914)
+in the first average (i.e. for \code{n=5} averages such as 1910-1914).
+
+The time attribute reflects the average over the same block as the average
+of the data, that is \code{n}-yearly averages will be centered.
+}
+\examples{
+tas <- readNetCDF(system.file("extdata", "annual_CRUTEMv3_1961-90.nc", package="geoutils"), varname="temp")
+
+## compute 5-yearly averages
+tas.avg <- time_average(tas, 5, type='start')
+
+## get a grid point with little missing values
+si <- which.max(apply(!is.na(tas), 1, sum))
+
+## plot the data
+plot(tas, type='ts', si=si, lwd=1)
+plot(tas.avg, type='ts', si=si, col=2, lwd=2, add=T)
 }
 \keyword{utilities}
 
