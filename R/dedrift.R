@@ -4,17 +4,36 @@
 #' 
 #' @param data (list of) input time series of type NetCDF
 #' @param ctl (list of) control run time series of type NetCDF
-#' @param varname variable name (if data is no list)
+#' 
+#' @examples
+#' ## synthetic historical and control time series
+#' xx <- t(rnorm(400) + c(-4,0,3,1) + seq(0,sqrt(10), length=400)**2)
+#' attr(xx, 'time') <- seq(1900, by=0.25, length=400)
+#' class(xx) <- 'NetCDF'
+#' 
+#' ## synthetic control runs
+#' xctl <- t(as.vector(outer(c(-5,-3,-2,-1), log(seq(1, 100, length=300)), '*')) + rnorm(1200))
+#' attr(xctl, 'time') <- seq(1750, by=0.25, length=length(xctl))
+#' class(xctl) <- 'NetCDF'
+#' 
+#' ## without dedrifting
+#' plot(xx, type='ts', seas=T, main='Synthetic time series (forced simulation)')
+#' 
+#' ## control run
+#' plot(xctl, type='ts', seas=T, main='Synthetic control')
+#' 
+#' ## dedrifted forced run
+#' plot(dedrift(xx, xctl), type='ts', seas=T, main='Dedrifted forced simulation') 
+#' plot(xx, type='ts', seas=T, lwd=1, lty=2, add=T)
 #' 
 #' @keywords utilities
 #' @export
-dedrift <- function(data, ctl, varname='pr'){
-  warning('De-drifting should be used with relative or log-normalized precip data only')
+dedrift <- function(data, ctl){
   if (is.list(data)){
     vars <- names(data)
     out <- list()
   } else {
-    vars <- varname
+    vars <- 1
   }
   for (var in vars){
     if (is.list(data)){
@@ -24,39 +43,31 @@ dedrift <- function(data, ctl, varname='pr'){
       dat <- data
       ct <- ctl
     }
-    if (any(dim(dat)[c(1,3)] != dim(ct)[c(1,3)])) stop('Dimensions do not match')
-    ct.mn <- apply(ct, c(1,3,4), mean, na.rm=T)
-    ct.arr <- array(ct.mn, c(prod(dim(ct.mn)[1:2]), dim(ct.mn)[3]))
-    ct.trend <- rep(NA, nrow(ct.arr))
-    mask <- apply(!is.na(ct.arr), 1, any)
-    ct.trend[mask] <- apply(ct.arr[mask,], 1, function(x) lm(x ~ seq(along=x))$coef[2])
-    ct.trend <- array(ct.trend, c(dim(ct.mn)[1], 1, dim(ct.mn)[2]))[,rep(1, dim(dat)[2]),]
-    index <- dim(dat)[4]:1
-    runs <- apply(apply(!is.na(dat), 1:2, any), 1, sum)
-    for (i in 1:dim(dat)[1]){
-      for (j in 1:runs[i]){
-        for (k in 1:dim(dat)[3]){
-          ind <- index
-          ind[is.na(dat[i,j,k,])] <- NA
-          ind <- ind - mean(ind, na.rm=T)
-          dat[i,j,k,] <- dat[i,j,k,] + ind*ct.trend[i,j,k]
-        }
-      }
-    }
-    if (is.list(data)){
-      out[[var]] <- dat
-      attnames <- setdiff(names(attributes(data[[var]])), 'dim')
-      for (atn in attnames){
-        attr(out[[var]], atn) <- attr(data[[var]], atn)
-      }
-      attr(out[[var]], 'trend') <- ct.trend[,1,]
+    ## select overlapping time periods
+    ctime <- attr(ct, 'time')
+    dtime <- attr(dat, 'time')
+    ctim <- range(floor(ctime))
+    dtim <- range(floor(dtime))
+    if (all(dtime %in% ctime)){
+      ct <- select_time(ct, dtim[1], dtim[2])
     } else {
-      out <- dat
-      attnames <- setdiff(names(attributes(data)), 'dim')
-      for (atn in attnames){
-        attr(out, atn) <- attr(data, atn)
-      }
-      attr(out, 'trend') <- ct.trend[,1,]
+      ct <- select_time(ct, ctim[1], ctim[1] + diff(dtim))
+    }
+    ## make sure the data have the same units
+    ct <- convertx(ct, dat)
+    ## compute the trends from the control
+    ct.trend <- movartrend(ct, diff(dtim)+1)$trend
+    ## expand to get residuals for individual time steps
+    xtim <- dtim[1]:dtim[2] - mean(dtim)
+    ct.resid <- as.vector(as.vector(ct.trend) * rep(xtim, each=length(ct.trend)))
+    ## subtract ct trend
+    ddat <- dat - ct.resid
+    attr(ddat, 'trend') <- ct.trend
+    
+    if (is.list(data)){
+      out[[var]] <- ddat
+    } else {
+      out <- ddat
     }
   }
   invisible(out)
