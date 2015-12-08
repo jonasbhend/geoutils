@@ -104,6 +104,8 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
         if (class(dtmp) == 'try-error') next
         if (ncol(dtmp) == min.ncol) next ## advance to next iteration immediately
         if (varname == 'hurs' & max(dtmp, na.rm=T) <= 1) dtmp <- dtmp*100
+        if ("giorgi" %in% grids) dtmp <- select_region(dtmp, 1:40)
+        if (substr(model, 1,4) == "GFDL" & varname == 'tas' & min(dtmp) < 0) dtmp <- dtmp + 273.15
         if (diff(range(attr(dtmp, 'time'))) > 2000){
           print(paste('Time in', scen, model, runi, 'is wrong'))
           next ## advance to next iteration
@@ -123,6 +125,8 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
           if (class(hdtmp) == 'try-error') next
           if (ncol(hdtmp) < min.ncol) next ## advance to next iteration immediately
           if (varname == 'hurs' & max(hdtmp, na.rm=T) <= 1) hdtmp <- hdtmp * 100
+          if ("giorgi" %in% grids) hdtmp <- select_region(hdtmp, 1:40)
+          if (substr(model, 1,4) == "GFDL" & varname == 'tas' & min(hdtmp) < 0) hdtmp <- hdtmp + 273.15
           if (diff(range(attr(hdtmp, 'time'))) > 2000){
             print(paste('Time in historical', model, runi, 'is wrong'))
             next ## advance to next iteration
