@@ -3,7 +3,7 @@ Title: package to read in and analyse climate model output in NetCDF format
 Description: This package supplies utility functions to read in NetCDF data
     following CF conventions. Also, it is a loose collection of utitility
     functions used to analyse and manipulate climate data.
-Version: 0.1.9002
+Version: 0.1.9003
 Date: 2015-12-09
 Authors@R: 'Jonas Bhend <jonas.bhend@gmx.ch> [aut, cre]'
 Depends:

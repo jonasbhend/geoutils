@@ -158,7 +158,7 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
         
         if (complete_ts){
           inrange <- min(dtmp, na.rm=T) >= valid_range[1] & max(dtmp, na.rm=T) <= valid_range[2]
-          xmask <- !apply(is.na(dtmp), 1, all)
+          xmask <- if (length(grep("GFDL", model)) == 1 & varname == 'tas') apply(is.na(dtmp), 1, mean) < 0.1 else !apply(is.na(dtmp), 1, all)
           hasTime <- min(attr(dtmp, 'time')) <= startyear + 1 & max(attr(dtmp, 'time')) > endyear - 1
           hasMiss <- sum(is.na(dtmp[xmask,])) <= 5*length(seas)*sum(xmask)
           if (hasTime & hasMiss & inrange){
