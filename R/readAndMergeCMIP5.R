@@ -137,7 +137,7 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
           }
           dtmp <- try(merge(hdtmp, dtmp), silent=TRUE)
           if (class(dtmp) == 'try-error') next
-          if (varname == 'tas' & model == 'HadGEM2-ES') dtmp[dtmp == 0] <- NA
+          if (varname == 'tas' & model == 'HadGEM2-ES') dtmp <- select_time(dtmp, c(1850, 2100))
           rm(hdtmp)
           ## read in global mean temperature if needed
           if (length(grids) > 1 & 'globalmean' %in% grids) {
