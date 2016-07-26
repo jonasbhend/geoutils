@@ -16,7 +16,11 @@ merge.NetCDF <- function(x,y=NULL){
   xtime <- attr(x, 'time')
   ytime <- attr(y, 'time')
   nseas <- median(c(table(xtime %/% 1), table(ytime %/% 1)))
-  atime <- seq(min(c(xtime, ytime)), max(c(xtime, ytime)), by=1/nseas)
+  if (length(xtime) == 1 | length(ytime) == 1){
+    atime <- sort(unique(c(xtime, ytime)))
+  } else {
+    atime <- seq(min(c(xtime, ytime)), max(c(xtime, ytime)), by=1/nseas)
+  }
   ## relax on constraint for different number of runs
   if (!is.null(rownames(x))){
     unirownames <- rownames(x)[rownames(x) %in% rownames(y)]

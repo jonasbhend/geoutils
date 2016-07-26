@@ -127,10 +127,10 @@ readAndMergeCMIP5 <- function(files, complete_ens=FALSE, complete_ts=TRUE, mulc=
           if (varname == 'hurs' & max(hdtmp, na.rm=T) <= 1) hdtmp <- hdtmp * 100
           if ("giorgi" %in% grids) hdtmp <- select_region(hdtmp, 1:40)
           if (substr(model, 1,4) == "GFDL" & varname == 'tas') hdtmp[hdtmp == 0] <- NA
-          if (length(grep("^SPI", varname)) == 1){
-            attr(hdtmp, 'time') <- floor(attr(hdtmp, 'time'))
-            attr(dtmp, 'time') <- floor(attr(dtmp, 'time'))
-          }
+          #if (length(grep("^SPI", varname)) == 1){
+          #  attr(hdtmp, 'time') <- floor(attr(hdtmp, 'time'))
+          #  attr(dtmp, 'time') <- floor(attr(dtmp, 'time'))
+          #}
           if (diff(range(attr(hdtmp, 'time'))) > 2000){
             print(paste('Time in historical', model, runi, 'is wrong'))
             next ## advance to next iteration
