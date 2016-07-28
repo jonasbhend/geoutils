@@ -66,7 +66,7 @@ time_average <- function(x, n, offset=NULL, type='start'){
     # number of timesteps and blocks in output
     ntimes  <- length(tim) - offset*nseas
     ntimes <- floor(ntimes/nseas)
-    nblocks <- floor(ntimes/n), 1
+    nblocks <- floor(ntimes/n)
     
     dim.new <- dims
     dim.new[length(dims)] <- nblocks*nseas
