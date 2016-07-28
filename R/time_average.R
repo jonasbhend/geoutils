@@ -66,13 +66,16 @@ time_average <- function(x, n, offset=NULL, type='start'){
     # number of timesteps and blocks in output
     ntimes  <- length(tim) - offset*nseas
     ntimes <- floor(ntimes/nseas)
-    nblocks <- max(floor(ntimes/n), 1)
+    nblocks <- floor(ntimes/n), 1
     
     dim.new <- dims
     dim.new[length(dims)] <- nblocks*nseas
     if (dims[length(dims)] == 1){
       warning('Only one time step in input - assuming input is average')
       out <- x
+    } else if (nblocks == 0) {
+      dim.new[length(dims)] <- 1
+      out <- array(x[length(x) - seq(prod(dim.new) - 1, 0)], dim.new)
     } else if (length(dim.new) == 1){
       dim.int <- c(1,nseas,floor(dims[length(dims)]/nseas))
       dim.int2<- c(1,nseas, n, nblocks)
