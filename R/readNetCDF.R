@@ -136,6 +136,8 @@ readNetCDF <- function(filename, varname=NULL, mask=NULL, mulc=1){
   if (any(names(nc$var) %in% c('region', 'regions', 'cluster', 'clusters'))){
     nname <- names(nc$var)[names(nc$var) %in% c('region', 'regions', 'cluster', 'clusters')]
     attr(out, 'regions') <- get.var.ncdf(nc, nname[1])
+  } else if (att.get.ncdf(nc, 0, 'region_names')$hasatt) {
+    attr(out, 'regions') <- strsplit(att.get.ncdf(nc, 0, 'region_names')$value, ', ')[[1]]
   }
   neffatt <- att.get.ncdf(nc, 0, 'number_of_effective_grid_boxes')
   if (neffatt$hasatt) attr(out, 'neff') <- as.numeric(strsplit(neffatt$val, ',')[[1]][-1])
